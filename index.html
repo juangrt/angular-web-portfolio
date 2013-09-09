@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html ng-app>
+<head>
+    <title>Angular Web Portfolio</title>
+    <!-- Requires jQuery and Angular JS to Work -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
+
+    <!-- Bootstrap keeps the style consistant alturnatively you can also remove this line and uncomment the
+    #container , #loadng h4 in the style.css -->
+    <link href="lib/bootstrap_3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+
+
+    <link href="css/style.css" rel="stylesheet" media="screen" />
+
+
+    <script type="text/javascript">
+        'use strict';
+        $(document).ready(function () {
+            // Handler for .ready() called.
+
+            // do iframe stuff
+            $('#other_page').attr("src", "http://vanitylaser.com/");
+            $('#other_page').load(function (event) {
+                $("#loading").hide("slow");
+
+            }) // End of Load Function
+
+            //Set View Full Site Link
+            $('#portLinks a').attr('href', $('#portWrap iframe').attr('src'));
+
+
+            //Left Arrow Controller
+            $('#leftHan').click(function () {
+                $("#imgGal").animate({"left": "+=238px"}, "slow", "swing");
+            });
+
+            //Right Arrow Controller
+            $('#rightHan').click(function () {
+                $("#imgGal").animate({"left": "-=238px"}, "slow", "swing");
+            });
+
+
+//Hover for Arrows
+            $("#rightHan").mouseover(function () {
+                $(this).toggleClass("over");
+            }).mouseout(function () {
+                        $(this).toggleClass("over");
+                    });
+
+            $("#leftHan").mouseover(function () {
+                $(this).toggleClass("over");
+            }).mouseout(function () {
+                        $(this).toggleClass("over");
+                    });
+
+        });
+
+
+        function WebPortfolio($scope, $http) {
+            $http.get('data/websites.json').success(function (data) {
+                $scope.websites = data;
+                $scope.iframeUrl = data[0].website;
+
+            });
+
+            $scope.imagedClicked = function (site) {
+                $scope.iframeUrl = site;
+                $("#loading").show("slow");
+                $('#portWrap iframe').attr('src', site);
+                $('#portLinks a').attr('href', $('#portWrap iframe').attr('src'));
+            }
+        }
+    </script>
+</head>
+<body>
+<div id="container" ng-controller="WebPortfolio">
+    <div id="webTitle">{{ iframeUrl }}</div>
+    <div id="portLinks">
+        <a target="_blank" href="">View Full Site</a>
+    </div>
+
+    <div id="portWrap">
+        <div id="loading">
+            <img src="assets/loader.gif">
+            <h4>Loading</h4>
+        </div>
+        <iframe id="other_page" frameborder="0" scrolling="no" height="400">
+            <p>Your browser does not support iframes.</p>
+        </iframe>
+
+        <div id="hidden_div"></div>
+
+    </div>
+
+    <div id="portFooter">
+        <div id="leftHan">
+            <img src="assets/left_over.png">
+        </div>
+        <div id="rightHan">
+            <img src="assets/right_over.png">
+        </div>
+        <ul id="imgGal">
+            <li ng-repeat="site in websites">
+                <img
+                        ng-class="{true: 'selected'}[(iframeUrl == site.website)]"
+                        value="{{ site.website }}" ng-click="imagedClicked(site.website)" ng-src="{{site.thumb}}"/>
+            </li>
+        </ul>
+    </div>
+
+</div>
+</body>
+</html>
